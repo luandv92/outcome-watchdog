@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outcome-watchdog"
+version = "0.1.0"
+description = "Catches automations that exit 0 but did nothing. Checks the real outcome of a job, not its exit code."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Luan Ribeiro de Brito" }
+]
+keywords = ["cron", "monitoring", "reliability", "observability", "task-scheduler", "ci", "watchdog"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
+dev = ["pytest>=7.0", "pyyaml>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/luandv92/outcome-watchdog"
+Repository = "https://github.com/luandv92/outcome-watchdog"
+Issues = "https://github.com/luandv92/outcome-watchdog/issues"
+
+[project.scripts]
+outcome-watchdog = "outcome_watchdog.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["outcome_watchdog*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
