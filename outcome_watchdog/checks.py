@@ -199,6 +199,11 @@ def check_command(outcome: Outcome, state: StateStore, now: datetime) -> Outcome
             shell=True,
             capture_output=True,
             text=True,
+            # Without an explicit encoding the output is decoded in the locale
+            # codepage (cp1252 on Windows): one accented character and stdout
+            # comes back as None while the return code still looks fine.
+            encoding="utf-8",
+            errors="replace",
             timeout=outcome.timeout,
         )
     except subprocess.TimeoutExpired:
