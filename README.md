@@ -141,6 +141,44 @@ $ outcome-watchdog check config.yml --json
 }
 ```
 
+## Monitoring agent workflows
+
+An agent call completing is an attempt, not necessarily an accepted result.
+For a planner/worker/reviewer workflow, keep role traces separate from the
+ledger of results that passed review and application checks. Append a record
+such as this only after acceptance:
+
+```json
+{"run_id":"run-001","accepted_at":"2026-11-11T12:00:00+00:00","artifact":"design.json"}
+```
+
+Point a `log_growth` outcome at that accepted-result ledger, using
+`timestamp_field: accepted_at`. A fresh attempt log must not hide four days
+without accepted results. The watchdog checks the ledger contract; it does
+not validate the quality of a design, the truth of a model's self-review,
+or whether an external deployment happened. Make those acceptance checks
+explicit in the producer before writing the record.
+
+The runnable example creates fixtures in a temporary directory and calls
+the real watchdog engine, with no network or API credentials:
+
+```bash
+pip install -e .
+python examples/agent_outcomes.py
+```
+
+Expected verdicts: `fresh=OK`, `quiet=NO_CHANGE`, `missing=UNVERIFIED`.
+Both existing fixture ledgers are written during the demo, but the quiet
+one contains only a four-day-old acceptance timestamp. This demonstrates
+why a recently touched file is not proof of a recent useful outcome.
+The missing ledger remains inconclusive, not healthy. Applications that
+require positive proof of success should require `OK` explicitly; the
+general CLI intentionally does not fail solely for `UNVERIFIED`.
+
+See [`examples/agent_outcomes.py`](examples/agent_outcomes.py), its
+[regression test](tests/test_agent_outcomes_example.py), and the companion
+[bounded agent workflow](https://github.com/luandv92/llm-cascade/blob/main/examples/agent_workflow.py).
+
 ## Design origin
 
 This package generalizes a pattern from a production watchdog that has been
